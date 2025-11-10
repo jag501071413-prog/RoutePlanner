@@ -1,0 +1,100 @@
+﻿@page
+@model RoutePlanner.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "Doctor Route Planner";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Plan a day of house calls</h5>
+                <p class="text-muted">Paste JSON or upload a .json file. Sample data is available.</p>
+
+                <form method="post" enctype="multipart/form-data" id="plannerForm">
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <label class="form-label">Paste JSON</label>
+                            <textarea class="form-control" id="JsonInput" name="JsonInput" rows="12">@Model.JsonInput</textarea>
+                        </div>
+                        <div class="col-lg-6">
+                            <label class="form-label">Or upload JSON file</label>
+                            <input class="form-control" type="file" name="JsonFile" accept="application/json" />
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary" name="action" value="plan">Upload & Plan Route</button>
+                                <button type="submit" class="btn btn-outline-secondary" name="action" value="loadsample">Load Sample Data</button>
+                                <button type="button" class="btn btn-outline-danger" id="clearBtn">Clear</button>
+                            </div>
+                            <div class="mt-3">
+                                <small class="text-muted">Home coordinates: Houston, TX (29.7604, -95.3698)</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                @if (Model.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger mt-3">@Model.ErrorMessage</div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Result != null)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Route Summary</h5>
+                    <div class="d-flex justify-content-between mb-3">
+                        <div><strong>Total distance:</strong> @Model.Result.TotalDistanceKm km</div>
+                        <div><strong>Total duration:</strong> @Model.Result.TotalDuration</div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Location</th>
+                                    <th>Arrival</th>
+                                    <th>Departure</th>
+                                    <th>Distance (km)</th>
+                                    <th>Coordinates</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 0;
+                                    foreach (var stop in Model.Result.Stops)
+                                    {
+                                        i++;
+                                        <tr class="@(i == 1 ? "table-success" : (i == 2 ? "table-info" : ""))">
+                                            <td>@i</td>
+                                            <td>@stop.LocationName</td>
+                                            <td>@stop.ArrivalTime.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>@stop.DepartureTime.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>@stop.TravelDistanceKm.ToString("0.00")</td>
+                                            <td>@stop.Latitude.ToString("0.000") , @stop.Longitude.ToString("0.000")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById('clearBtn').addEventListener('click', function(){
+            document.getElementById('JsonInput').value = '';
+        });
+    </script>
+}
