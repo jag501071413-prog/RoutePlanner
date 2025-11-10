@@ -17,10 +17,10 @@ namespace RoutePlanner.Application.Services
         {
             _earthRadiusKm = settings.Value.EarthRadiusKm;
         }
-        public double GetDistanceKm(double lat1, double lon1, double lat2, double lon2)
+        public double GetDistanceKm(double lat1, double long1, double lat2, double long2)
         {
             double dLat = ToRadians(lat2 - lat1);
-            double dLon = ToRadians(lon2 - lon1);
+            double dLon = ToRadians(long2 - long1);
             double a = Math.Pow(Math.Sin(dLat / 2), 2) +
                        Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
                        Math.Pow(Math.Sin(dLon / 2), 2);
